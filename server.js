@@ -102,7 +102,11 @@ function viewAllEmployees() {
 
 //function allows us to view all roles 
 function viewAllRoles() {
-    const query = "SELECT roles.title, roles.id, departments.department_name, roles.salary FROM roles INNER JOIN departments ON roles.department_id = departments.id";
+    const query = `
+        SELECT roles.title, roles.id, departments.department_name, roles.salary 
+        FROM roles 
+        LEFT JOIN departments ON roles.department_id = departments.id
+    `;
     SQLconnection.query(query, (err, res) => {
         if (err) throw err;
         console.table(res);
@@ -178,7 +182,7 @@ function addRole() {
                     },
                     (err, res) => {
                         if (err) throw err;
-                        console.log('Added ${answers.title} with salary ${answers.salary} to the ${answers.department} department in the database!');
+                        console.log(`Added ${answers.title} with salary ${answers.salary} to the ${answers.department} department in the database!`);
                         start();
                     }
                 );
