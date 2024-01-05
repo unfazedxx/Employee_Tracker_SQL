@@ -190,7 +190,6 @@ function addRole() {
     });
 }
 
-//function to add an employee
 function addEmployee() {
     const queryRoles = "SELECT id, title FROM roles";
     SQLconnection.query(queryRoles, (error, results) => {
@@ -198,75 +197,72 @@ function addEmployee() {
             console.error(error);
             return;
         }
-    })
+        
         const roles = results.map(({ id, title }) => ({
             name: title,
             value: id,
         }));
-        const queryManager = "SELECT manager_id, manager FROM managers";
-        {    SQLconnection.query(queryManager, (error, results) => {
-                if (error) {
-                    console.error(error);
-                    return;
-                }
-
-
-        const manager = results.map(({ id, title }) => ({
-            name: title,
-            value: id,
-        }));
-
-                inquirer
-                    .prompt([
-                        {
-                            type: "input",
-                            name: "firstName",
-                            message: "What is the employee's first name?",
-                        },
-                        {
-                            type: "input",
-                            name: "lastName",
-                            message: "What is the employee's last name?",
-                        },
-                        {
-                            type: "list",
-                            name: "roleId",
-                            message: "Select the role:",
-                            choices: roles,
-                        },
-                        {
-                            type: "list",
-                            name: "managerId",
-                            message: "Select the manager:",
-                            choices: manager,
-                        },
-                    ])
-                    .then((answers) => {
-                        // add the employee into the database
-                        const sql =
-                            "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
-                        const values = [
-                            answers.firstName,
-                            answers.lastName,
-                            answers.roleId,
-                            answers.managerId,
-                        ];
-                        SQLconnection.query(sql, values, (error) => {
-                            if (error) {
-                                console.error(error);
-                                return;
-                            }
-
-                            console.log("Employee added successfully");
-                            start();
-                        });
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
+        
+        const queryManager = "SELECT manager_id, manager FROM employee_tracker_db.managers";
+        SQLconnection.query(queryManager, (error, results) => {
+            if (error) {
+                console.error(error);
+                return;
             }
-        );
-    };
+
+            const managers = results.map(({ manager_id, manager }) => ({
+                name: manager,
+                value: manager_id,
+            }));
+            
+            inquirer
+                .prompt([
+                    {
+                        type: "input",
+                        name: "firstName",
+                        message: "What is the employee's first name?",
+                    },
+                    {
+                        type: "input",
+                        name: "lastName",
+                        message: "What is the employee's last name?",
+                    },
+                    {
+                        type: "list",
+                        name: "roleId",
+                        message: "Select the role:",
+                        choices: roles,
+                    },
+                    // {
+                    //     type: "list",
+                    //     name: "managerId",
+                    //     message: "Select the manager:",
+                    //     choices: managers,
+                    // },
+                ])
+                .then((answers) => {
+                    // add the employee into the database
+                    const sql = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
+                    const values = [
+                        answers.firstName,
+                        answers.lastName,
+                        answers.roleId,
+                        answers.managerId,
+                    ];
+                    SQLconnection.query(sql, values, (error) => {
+                        if (error) {
+                            console.error(error);
+                            return;
+                        }
+                        console.log("Employee added successfully");
+                        start();
+                    });
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        });
+    });
 }
 
 // Function to add a Manager

@@ -25,8 +25,8 @@ FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE SET NULL
 );
 
 CREATE TABLE managers (
-    manager_id INT AUTO_INCREMENT PRIMARY KEY,   
-    manager VARCHAR(30),
-)
+    manager_id INT AUTO_INCREMENT PRIMARY KEY,
+    manager VARCHAR(255) NOT NULL
+);
 
 -- 
